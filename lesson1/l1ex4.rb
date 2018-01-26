@@ -9,11 +9,8 @@ d = b**2 - 4 * a * c
 
 if d < 0
   puts "#{d} - дискриминант. Корней нет."
-else
+elsif d > 0
   sqrt_d = Math.sqrt(d)
-end
-
-if d > 0
   puts "#{d} - дискриминант. Корни: x1 = #{(- b + sqrt_d) / (2 * a)}, x2 = #{(- b - sqrt_d) / (2 * a)}."
 elsif d == 0
   puts "#{d} - дискриминант. Корень: x = #{- b / (2 * a)}."

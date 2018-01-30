@@ -1,9 +1,17 @@
-vovels = Hash.new
+letters = ('a'..'z').to_a
 
-vovels['a'] = 1
-vovels['e'] = 5
-vovels['i'] = 9
-vovels['o'] = 15
-vovels['u'] = 21
+i = 0
+alphabet = Hash.new
 
-print vovels
+while i < 26
+  alphabet[letters[i]] = i + 1
+  i += 1
+end
+
+alphabet.each_with_index do |(key, value), index |
+  puts "#{key}: #{value}." if index == 0
+  puts "#{key}: #{value}." if index == 4
+  puts "#{key}: #{value}." if index == 8
+  puts "#{key}: #{value}." if index == 14
+  puts "#{key}: #{value}." if index == 20
+end

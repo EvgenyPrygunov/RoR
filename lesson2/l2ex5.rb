@@ -14,8 +14,8 @@ end
 month_sum = 0
 
 months.each do |k, v|
+  break if k == month
   month_sum += v
-  break if k == month - 1
 end
 
 date_num = month_sum + day

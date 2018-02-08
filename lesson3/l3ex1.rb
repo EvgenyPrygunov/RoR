@@ -3,84 +3,59 @@ class Station
 
   def initialize(station_name)
     @station_name = station_name
-    @trains = {}
-    @train_char = {}
     @train_list = []
-    @passenger_type = 0
-    @freight_type = 0
   end
 
   def train_arrival(train, type, wagon_num)
-    @train_char[type] = wagon_num
-    @trains[train] = @train_char
-    @train_list << train
-    if type == 'passenger'
-      @passenger_type += 1
-    else
-      @freight_type += 1
-    end
+    @train_list << [train, type, wagon_num]
   end
 
-  def train_departure(train, type)
-    @trains.delete(train)
-    @train_list.delete(train)
-    if type == 'passenger'
-      @passenger_type -= 1
-    else
-      @freight_type -= 1
-    end
+  def train_departure(train)
+    @train_list.delete_if{ |t| t[0] == train }
   end
 
   def train_list
-    puts "Trains on the station: #{@train_list}"
+    @train_list
   end
 
   def train_type
-    puts "Passenger trains: #{@passenger_type}."
-    puts "Freight trains: #{@freight_type}."
+    count = Hash.new(0)
+    @train_list.each { |train| count[train[1]] += 1 }
+    count
   end
 end
 
 class Route
-  attr_reader :dispatch_station
-  attr_reader :destination_station
   attr_reader :station_list
 
 
   def initialize(dispatch_station, destination_station)
-    @dispatch_station = dispatch_station
-    @destination_station = destination_station
-    @station_list = [@dispatch_station, @destination_station]
+    #@dispatch_station = dispatch_station
+    #@destination_station = destination_station
+    @station_list = [dispatch_station, destination_station]
   end
 
-  def station_add (name)
-    @station_list << name
-    @station_list.delete(@destination_station)
-    @station_list << @destination_station
+  def station_add(station)
+    @station_list.insert(-2, station)
   end
 
-  def station_remove (name)
-    @station_list.delete(name)
+  def station_remove(station)
+    @station_list.delete(station)
   end
 
   def route_show
-    puts "#{@station_list}"
+    @station_list
   end
 
 end
 
 class Train
   attr_accessor :speed
-  attr_accessor :wagon_num
 
   def initialize(train, type, wagon_num)
-    @train = train
-    @type = type
-    @wagon_num = wagon_num
-    @first_station = ''
-    @current_station = ''
-    @current_route = ''
-    @station = ''
+    @train_list = [train, type, wagon_num]
+    @current_station = 0
+    @route = []
     @speed = 0
   end
 
@@ -93,41 +68,45 @@ class Train
   end
 
   def add_wagon
-    self.wagon_num += 1 if @speed == 0
+    @train_list[2] += 1 if @speed == 0
   end
 
   def remove_wagon
-    self.wagon_num -= 1 if @speed == 0 && @wagon_num > 1
+    @train_list[2] -= 1 if @speed == 0
+  end
+
+  def wagon_num
+    @train_list[2]
   end
 
   def add_route(route)
-    @station = 0
-    @current_route = route
-    @current_station =  @current_route.station_list[@station]
+    @route = route.route_show
+    @current_station = 0
+    @route[@current_station]
   end
 
   def route_up
-    if @current_station != @current_route.destination_station
-      @station += 1
-      @current_station =  @current_route.station_list[@station]
-    else
-      puts 'Final station!'
+    if @current_station != @route.length - 1
+      @current_station += 1
+      @route[@current_station]
     end
   end
 
   def route_down
-    if @current_station != @current_route.dispatch_station
-      @station -= 1
-      @current_station =  @current_route.station_list[@station]
-    else
-      puts 'You are at the first station!'
+    if @current_station != 0
+      @current_station -= 1
+      @route[@current_station]
     end
   end
 
   def closest_stations
-    puts "Previous station: #{@current_route.station_list[@station - 1]}"
-    puts "Current station: #{@current_route.station_list[@station]}"
-    puts "Next station: #{@current_route.station_list[@station + 1]}"
+    if @current_station == 0
+      @route.slice(@current_station, 2)
+    elsif @current_station > 0
+      @route.slice(@current_station - 1, 3)
+    elsif @current_station == @route.last
+      @route.slice(-2, 2)
+    end
   end
 
 end

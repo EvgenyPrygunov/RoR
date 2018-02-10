@@ -1,60 +1,65 @@
 class Train
-  attr_accessor :speed, :wagon_num
-  attr_reader :name, :type
+  attr_reader :name, :type, :speed, :wagon_num
 
   def initialize(name, type, wagon_num)
     @name = name
     @type = type
     @wagon_num = wagon_num
-    @current_station = 0
+    @current_station_index = 0
     @current_route = 0
     @speed = 0
   end
 
   def speed_stop
-    self.speed = 0
+    @speed = 0
   end
 
   def speed_up
-    self.speed += 10
+    @speed += 10
   end
 
   def add_wagon
-    self.wagon_num += 1 if @speed == 0
+    @wagon_num += 1 if @speed == 0
   end
 
   def remove_wagon
-    self.wagon_num -= 1 if @speed == 0
+    @wagon_num -= 1 if @speed == 0 && @wagon_num != 0
   end
 
   def add_route(route)
     @current_route = route
-    @current_station = 0
-    @current_route.station_list[@current_station]
+    @current_station_index = 0
+    current_station.train_arrival(self)
   end
 
-  def route_up
-    if @current_station != @current_route.station_list.length - 1
-      @current_station += 1
-      @current_route.station_list[@current_station]
+  def forward
+    if @current_station_index != @current_route.station_list.length - 1
+      current_station.train_departure(self)
+      @current_station_index += 1
+      current_station.train_arrival(self)
+      @current_route.station_list[@current_station_index]
     end
   end
 
-  def route_down
-    if @current_station != 0
-      @current_station -= 1
-      @current_route.station_list[@current_station]
+  def backward
+    if @current_station_index != 0
+      current_station.train_departure(self)
+      @current_station_index -= 1
+      current_station.train_arrival(self)
+      @current_route.station_list[@current_station_index]
     end
   end
 
-  def closest_stations
-    if @current_station == 0
-      @current_route.station_list.slice(@current_station, 2)
-    elsif @current_station > 0
-      @current_route.station_list.slice(@current_station - 1, 3)
-    elsif @current_station == @current_route.station_list.last
-      @current_route.station_list.slice(-2, 2)
-    end
+  def current_station
+    @current_route.station_list[@current_station_index]
+  end
+
+  def previous_station
+    @current_route.station_list[@current_station_index - 1] if @current_station_index != 0
+  end
+
+  def next_station
+    @current_route.station_list[@current_station_index + 1] if @current_station_index != @current_route.station_list.length - 1
   end
 
 end

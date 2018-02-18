@@ -17,12 +17,11 @@ class Train
   end
 
   def add_wagon(wagon)
-    @wagons << wagon
+    @wagons << wagon if @speed == 0 && right_type?(wagon)
   end
 
-  def remove_wagon #(wagon)
-    #@wagons.delete(wagon)
-    @wagons.pop
+  def remove_wagon
+    @wagons.pop if @speed == 0
   end
 
   def add_route(route)

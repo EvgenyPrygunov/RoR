@@ -6,8 +6,8 @@ class CargoTrain < Train
     @type = 'cargo'
   end
 
-  def add_wagon(wagon)
-    super if wagon.type == self.type
+  def right_type?(wagon)
+    wagon.is_a?CargoWagon
   end
 
 end

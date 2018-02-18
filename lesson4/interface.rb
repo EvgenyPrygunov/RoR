@@ -54,13 +54,13 @@ class Interface
   private
 
   #These methods are used only inside class Interface
-  def make_station #good!
+  def make_station
     puts 'Enter station name.'
     name = gets.chomp.to_s
     @stations << Station.new(name)
   end
 
-  def make_train #good!
+  def make_train
     puts 'What type of train do you create(enter number 1/2)? 1 - cargo, 2 - passenger'
     type = gets.chomp.to_i
     case type
@@ -77,7 +77,7 @@ class Interface
     end
   end
 
-  def make_route #good!
+  def make_route
     stations_list
     puts 'Enter number of dispatch station.'
     dispatch = gets.chomp.to_i - 1
@@ -86,7 +86,7 @@ class Interface
     @routes << Route.new(@stations[dispatch], @stations[destination])
   end
 
-  def route_station_add #good!
+  def route_station_add
     routes_list
     puts 'Enter number of route.'
     route = gets.chomp.to_i - 1
@@ -96,7 +96,7 @@ class Interface
     @routes[route].station_add(@stations[station])
   end
 
-  def route_station_delete #good!
+  def route_station_delete
     routes_list
     puts 'Enter number of route.'
     route = gets.chomp.to_i - 1
@@ -106,7 +106,7 @@ class Interface
     @routes[route].station_remove(@stations[station])
   end
 
-  def route_to_train #good!
+  def route_to_train
     trains_list
     puts 'Enter train number to add route.'
     train = gets.chomp.to_i - 1
@@ -116,7 +116,7 @@ class Interface
     @trains[train].add_route(@routes[route])
   end
 
-  def add_wagon #good!
+  def add_wagon
     trains_list
     puts 'Enter train number to add wagon.'
     train = gets.chomp.to_i - 1
@@ -127,7 +127,7 @@ class Interface
     end
   end
 
-  def remove_wagon #good!
+  def remove_wagon
     trains_list
     puts 'Enter train number to remove wagon.'
     train = gets.chomp.to_i - 1

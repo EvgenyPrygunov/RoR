@@ -6,9 +6,11 @@ class Route
   attr_reader :station_list
 
   def initialize(dispatch_station, destination_station)
+    @dispatch_station = dispatch_station
+    @destination_station = destination_station
+    validate!
     @station_list = [dispatch_station, destination_station]
     register_instance
-    validate!
   end
 
   def station_add(station)
@@ -28,8 +30,10 @@ class Route
   protected
 
   def validate!
-    raise 'Dispatch station can\'t be nil' if @station_list[0].nil?
-    raise 'Destination station can\'t be nil' if @station_list.last.nil?
+    raise 'Dispatch station can\'t be nil' if @dispatch_station.nil?
+    raise 'Destination station can\'t be nil' if @destination_station.nil?
+    raise 'Dispatch station must be a Station class instance' unless @dispatch_station.is_a?Station
+    raise 'Destination station must be a Station class instance' unless @destination_station.is_a?Station
     true
   end
 

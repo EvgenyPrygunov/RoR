@@ -20,9 +20,9 @@ class Train
     @current_station_index = 0
     @speed = 0
     @wagons = []
+    validate!
     @@all[number] = self
     register_instance
-    validate!
   end
 
   def speed_stop

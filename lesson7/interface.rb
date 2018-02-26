@@ -132,12 +132,12 @@ class Interface
     train = gets.chomp.to_i - 1
     if @trains[train].type == 'cargo'
       puts 'Enter total volume.'
-      total_volume = gets.chomp.to_f
-      @trains[train].add_wagon(CargoWagon.new(total_volume))
+      capacity = gets.chomp.to_f
+      @trains[train].add_wagon(CargoWagon.new(capacity))
     elsif @trains[train].type == 'passenger'
       puts 'Enter seating capacity.'
-      seating_capacity = gets.chomp.to_i
-      @trains[train].add_wagon(PassengerWagon.new(seating_capacity))
+      capacity = gets.chomp.to_i
+      @trains[train].add_wagon(PassengerWagon.new(capacity))
     end
   end
 
@@ -178,7 +178,7 @@ class Interface
     stations_list
     puts 'Enter station number to watch trains on it.'
     station = gets.chomp.to_i - 1
-    @stations[station].call_block { |train| puts "Train number: #{train.number}, type: #{train.type}, wagons: #{train.wagons.size}." }
+    @stations[station].each_train { |train| puts "Train number: #{train.number}, type: #{train.type}, wagons: #{train.wagons.size}." }
   end
 
   def train_wagons
@@ -188,10 +188,10 @@ class Interface
     trains_list
     puts 'Enter train number to watch it\'s wagons.'
     train = gets.chomp.to_i - 1
-    if @stations[station].trains[train].is_a?CargoTrain
-      @stations[station].trains[train].call_block { |wagon, i| puts "Wagon number: #{i}, type: cargo, free volume: #{wagon.free_volume}, occupied volume: #{wagon.occupied}." }
-    elsif @stations[station].trains[train].is_a?PassengerTrain
-      @stations[station].trains[train].call_block { |wagon, i| puts "Wagon number: #{i}, type: passenger, seating capacity: #{wagon.seating_capacity}, occupied volume: #{wagon.occupied}." }
+    if @stations[station].trains[train].is_a? CargoTrain
+      @stations[station].trains[train].each_wagon { |wagon, i| puts "Wagon number: #{i}, type: cargo, free volume: #{wagon.free_space}, occupied volume: #{wagon.occupied}." }
+    elsif @stations[station].trains[train].is_a? PassengerTrain
+      @stations[station].trains[train].each_wagon { |wagon, i| puts "Wagon number: #{i}, type: passenger, free seats: #{wagon.free_space}, occupied seats: #{wagon.occupied}." }
     end
   end
 
@@ -202,15 +202,15 @@ class Interface
     trains_list
     puts 'Enter train number to watch it\'s wagons.'
     train = gets.chomp.to_i - 1
-    if @stations[station].trains[train].is_a?CargoTrain
-      @stations[station].trains[train].call_block { |wagon, i| puts "Wagon number: #{i}, type: cargo, free volume: #{wagon.free_volume}, occupied volume: #{wagon.occupied}." }
+    if @stations[station].trains[train].is_a? CargoTrain
+      @stations[station].trains[train].each_wagon { |wagon, i| puts "Wagon number: #{i}, type: cargo, free volume: #{wagon.free_space}, occupied volume: #{wagon.occupied}." }
       puts 'Enter wagon number to occupy volume.'
       wagon = gets.chomp.to_i - 1
       puts 'Enter how much to occupy.'
       volume = gets.chomp.to_f
       @stations[station].trains[train].wagons[wagon].occupy_volume(volume)
-    elsif @stations[station].trains[train].is_a?PassengerTrain
-      @stations[station].trains[train].call_block { |wagon, i| puts "Wagon number: #{i}, type: passenger, seating capacity: #{wagon.seating_capacity}, occupied volume: #{wagon.occupied}." }
+    elsif @stations[station].trains[train].is_a? PassengerTrain
+      @stations[station].trains[train].each_wagon { |wagon, i| puts "Wagon number: #{i}, type: passenger, free seats: #{wagon.free_space}, occupied seats: #{wagon.occupied}." }
       puts 'Enter wagon number to take seat.'
       wagon = gets.chomp.to_i - 1
       @stations[station].trains[train].wagons[wagon].take_seat

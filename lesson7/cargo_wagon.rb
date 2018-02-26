@@ -1,21 +1,11 @@
-require_relative 'company_name'
-class CargoWagon
-  include CompanyName
+class CargoWagon < Wagon
 
-  attr_accessor :occupied
-  attr_reader :total_volume
-
-  def initialize(total_volume)
-    @total_volume = total_volume
-    @occupied = 0
+  def initialize(capacity)
+    super(capacity)
   end
 
   def occupy_volume(volume)
     self.occupied += volume
-  end
-
-  def free_volume
-    @total_volume - @occupied
   end
 
 end

@@ -77,7 +77,7 @@ class Train
     @current_route.station_list[@current_station_index + 1] if @current_station_index != @current_route.station_list.length - 1
   end
 
-  def call_block(&block)
+  def each_wagon(&block)
     @wagons.each.with_index(1) { |wagon, i| block.call(wagon, i) }
   end
 

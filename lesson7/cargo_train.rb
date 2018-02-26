@@ -7,7 +7,7 @@ class CargoTrain < Train
   end
 
   def right_type?(wagon)
-    wagon.is_a?CargoWagon
+    wagon.is_a? CargoWagon
   end
 
 end

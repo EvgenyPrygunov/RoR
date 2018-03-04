@@ -28,7 +28,7 @@ class Station
   end
 
   def each_train
-    @trains.each.with_index(1) { |train, i| yield(train, i) }
+    @trains.each.with_index(0) { |train, i| yield(train, i) }
   end
 
   def valid?

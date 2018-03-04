@@ -1,20 +1,6 @@
 require_relative 'each_type_wagon'
-class Interface < InterfaceLogic
+class Interface
   include EachTypeWagon
-
-  def menu
-    loop do
-      choice_info
-      input = gets.chomp.to_i
-      if @choice[input]
-        send @choice[input]
-      else
-        puts 'Input a number from 0 to 14!'
-      end
-    end
-  end
-
-  private
 
   def choice_info
     puts 'Enter the number:
@@ -27,49 +13,29 @@ class Interface < InterfaceLogic
       14 - occupy seat or volume in wagon, 0 - to exit'
   end
 
-  def stations_list
-    @stations.each.with_index(1) { |station, i| puts "#{station.name}: #{i}." }
+  def stations_list(stations)
+    stations.each.with_index(0) { |station, i| puts "#{i}: #{station.name}." }
   end
 
-  def routes_list
-    @routes.each.with_index(1) do |route, i|
-      puts "#{route.station_list}: #{i}."
+  def routes_list(routes)
+    routes.each.with_index(0) do |route, i|
+      puts "#{i}: #{route.station_list}."
     end
   end
 
-  def trains_list
-    @trains.each.with_index(1) do |train, i|
-      puts "#{train} #{train.number} #{train.type} : #{i}."
+  def trains_list(trains)
+    trains.each.with_index(0) do |train, i|
+      puts "#{i}: #{train} #{train.number} #{train.type}."
     end
   end
 
-  def trains_on_station
-    stations_list
-    puts 'Enter station number.'
-    station = gets.chomp.to_i - 1
-    each_train_station(station)
+  def ask_for_string(message)
+    puts message
+    gets.chomp.to_s
   end
 
-  def train_wagons
-    stations_list
-    puts 'Enter station number.'
-    station = gets.chomp.to_i - 1
-    each_train_station(station)
-    puts 'Enter train number to watch it\'s wagons.'
-    train = gets.chomp.to_i - 1
-    train_wagon_list(station, train)
-  end
-
-  def train_wagon_list(station, train)
-    each_cargo_wagon(station, train) if
-      @stations[station].trains[train].is_a? CargoTrain
-    each_passenger_wagon(station, train) if
-      @stations[station].trains[train].is_a? PassengerTrain
-  end
-
-  def each_train_station(station)
-    @stations[station].each_train do |train, i|
-      puts "#{i}: #{train.number}, #{train.type}, #{train.wagons.size} wagons."
-    end
+  def ask_for_number(message)
+    puts message
+    gets.chomp.to_i
   end
 end

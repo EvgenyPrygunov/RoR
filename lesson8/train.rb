@@ -73,7 +73,7 @@ class Train
   end
 
   def each_wagon
-    @wagons.each.with_index(1) { |wagon, i| yield(wagon, i) }
+    @wagons.each.with_index(0) { |wagon, i| yield(wagon, i) }
   end
 
   def valid?

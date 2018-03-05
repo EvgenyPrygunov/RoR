@@ -1,6 +1,11 @@
-require_relative 'each_type_wagon'
+require_relative 'station_module'
+require_relative 'route_module'
+require_relative 'train_module'
+
 class InterfaceLogic
-  include EachTypeWagon
+  include StationModule
+  include RouteModule
+  include TrainModule
 
   def initialize
     @int = Interface.new
@@ -29,89 +34,6 @@ class InterfaceLogic
   end
 
   private
-
-  # Stations
-
-  def make_station
-    name = @int.ask_for_string('Enter station name.')
-    @stations << Station.new(name)
-  end
-
-  def stations_list
-    @int.stations_list(@stations)
-  end
-
-  # Routes
-
-  def make_route
-    @int.stations_list(@stations)
-    dispatch = @int.ask_for_number('Enter number of dispatch station.')
-    destination = @int.ask_for_number('Enter number of destination station.')
-    @routes << Route.new(@stations[dispatch], @stations[destination])
-  end
-
-  def route_station_add
-    @int.routes_list(@routes)
-    route = @int.ask_for_number('Enter number of route.')
-    @int.stations_list(@stations)
-    station = @int.ask_for_number('Enter number of station to add.')
-    @routes[route].station_add(@stations[station])
-  end
-
-  def route_station_delete
-    @int.routes_list(@routes)
-    route = @int.ask_for_number('Enter number of route.')
-    @int.stations_list(@stations)
-    station = @int.ask_for_number('Enter number of station to delete.')
-    @routes[route].station_remove(@stations[station])
-  end
-
-  # Trains
-
-  def make_train
-    begin
-      type = @int.ask_for_number('What type? 1 - cargo, 2 - passenger.')
-      number = @int.ask_for_string('Enter train number.')
-      @trains << CargoTrain.new(number) if type == 1
-      @trains << PassengerTrain.new(number) if type == 2
-    rescue RuntimeError => e
-      puts e.message
-      retry
-    end
-    puts "Train №#{number} created."
-  end
-
-  def route_to_train
-    @int.trains_list(@trains)
-    train = @int.ask_for_number('Enter train number to add route.')
-    @int.routes_list(@routes)
-    route = @int.ask_for_number('Enter route number.')
-    @trains[train].add_route(@routes[route])
-  end
-
-  def train_forward
-    @int.trains_list(@trains)
-    train = @int.ask_for_number('Enter train number to move forward.')
-    @trains[train].forward
-  end
-
-  def train_backward
-    @int.trains_list(@trains)
-    train = @int.ask_for_number('Enter train number to move backward.')
-    @trains[train].backward
-  end
-
-  def trains_on_station
-    @int.stations_list(@stations)
-    station = @int.ask_for_number('Enter station number.')
-    each_train_station(station)
-  end
-
-  def each_train_station(station)
-    @stations[station].each_train do |train, i|
-      puts "#{i}: #{train.number}, #{train.type}, #{train.wagons.size} wagons."
-    end
-  end
 
   # Wagons
 
@@ -144,23 +66,23 @@ class InterfaceLogic
   def train_wagons
     stations_list
     station = @int.ask_for_number('Enter station number.')
-    each_train_station(station)
+    @int.each_train_station(station, @stations)
     train = @int.ask_for_number('Enter train number to watch it\'s wagons.')
     train_wagon_list(station, train)
   end
 
   def train_wagon_list(station, train)
     if @stations[station].trains[train].is_a? CargoTrain
-      each_cargo_wagon(station, train)
+      @int.each_cargo_wagon(station, train, @stations)
     elsif @stations[station].trains[train].is_a? PassengerTrain
-      each_passenger_wagon(station, train)
+      @int.each_passenger_wagon(station, train, @stations)
     end
   end
 
   def occupy
     stations_list
     station = @int.ask_for_number('Enter station number to watch trains on it.')
-    each_train_station(station)
+    @int.each_train_station(station, @stations)
     train = @int.ask_for_number('Enter train number to watch it\'s wagons.')
     if @stations[station].trains[train].is_a? CargoTrain
       occupy_cargo(station, train)
@@ -170,14 +92,14 @@ class InterfaceLogic
   end
 
   def occupy_cargo(station, train)
-    each_cargo_wagon(station, train)
+    @int.each_cargo_wagon(station, train, @stations)
     wagon = @int.ask_for_number('Enter wagon number to occupy volume.')
     volume = @int.ask_for_number('Enter how much to occupy.')
     @stations[station].trains[train].wagons[wagon].occupy_volume(volume)
   end
 
   def occupy_passenger(station, train)
-    each_passenger_wagon(station, train)
+    @int.each_passenger_wagon(station, train, @stations)
     wagon = @int.ask_for_number('Enter wagon number to take seat.')
     @stations[station].trains[train].wagons[wagon].take_seat
   end

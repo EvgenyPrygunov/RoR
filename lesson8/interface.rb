@@ -1,7 +1,4 @@
-require_relative 'each_type_wagon'
 class Interface
-  include EachTypeWagon
-
   def choice_info
     puts 'Enter the number:
       1 - station, 2 - train, 3 - route,
@@ -37,5 +34,23 @@ class Interface
   def ask_for_number(message)
     puts message
     gets.chomp.to_i
+  end
+
+  def each_cargo_wagon(station, train, stations)
+    stations[station].trains[train].each_wagon do |w, i|
+      puts "#{i}, cargo, free: #{w.free_space}, occupied: #{w.occupied}"
+    end
+  end
+
+  def each_passenger_wagon(station, train, stations)
+    stations[station].trains[train].each_wagon do |w, i|
+      puts "#{i}, passenger, free: #{w.free_space}, occupied: #{w.occupied}"
+    end
+  end
+
+  def each_train_station(station, stations)
+    stations[station].each_train do |train, i|
+      puts "#{i}: #{train.number}, #{train.type}, #{train.wagons.size} wagons."
+    end
   end
 end

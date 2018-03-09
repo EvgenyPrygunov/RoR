@@ -136,7 +136,7 @@ class Interface
       @trains[train].add_wagon(CargoWagon.new(capacity))
     elsif @trains[train].type == 'passenger'
       puts 'Enter seating capacity.'
-      capacity = gets.chomp.to_i
+      seating_capacity = gets.chomp.to_i
       @trains[train].add_wagon(PassengerWagon.new(capacity))
     end
   end
